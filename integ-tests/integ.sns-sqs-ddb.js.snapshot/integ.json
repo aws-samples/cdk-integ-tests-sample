@@ -1,0 +1,25 @@
+{
+  "version": "22.0.0",
+  "testCases": {
+    "DemoTest/DefaultTest": {
+      "stacks": [
+        "IntegrationTestStack"
+      ],
+      "cdkCommandOptions": {
+        "deploy": {
+          "args": {
+            "toolkitStackName": "CDKToolkit"
+          }
+        },
+        "destroy": {
+          "args": {
+            "toolkitStackName": "CDKToolkit",
+            "force": true
+          }
+        }
+      },
+      "assertionStack": "DemoTest/DefaultTest/DeployAssert",
+      "assertionStackName": "DemoTestDefaultTestDeployAssert54BA1147"
+    }
+  }
+}
