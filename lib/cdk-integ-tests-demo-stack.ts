@@ -13,46 +13,48 @@ import * as lambda from 'aws-cdk-lib/aws-lambda';
 import * as lambdaEventSources from 'aws-cdk-lib/aws-lambda-event-sources';
 import * as snsSubscriptions from 'aws-cdk-lib/aws-sns-subscriptions';
 import * as path from 'path';
-import { NagSuppressions } from 'cdk-nag';
 import { Construct, IConstruct } from 'constructs';
 import { CfnResource } from 'aws-cdk-lib';
 
-
 interface CdkIntegTestsDemoStackProps extends cdk.StackProps {
+  /**
+   * Whether to set all removal policies to DESTROY
+   */
   setDestroyPolicyToAllResources?: boolean;
 }
 
+/**
+ * The demo application stack defining a serverless data enrichment stack
+ */
 export class CdkIntegTestsDemoStack extends cdk.Stack {
   public readonly topicArn: string;
   public readonly tableName: string;
   public readonly kmsKeyArn: string;
+  public readonly functionName: string;
 
-  constructor(scope: Construct, id: string, props?: CdkIntegTestsDemoStackProps) {
+  constructor(
+    scope: Construct,
+    id: string,
+    props?: CdkIntegTestsDemoStackProps,
+  ) {
     super(scope, id, props);
 
     // KMS key for server-side encryption
-    const kmsKey = new kms.Key(this, 'TopicKey', {
+    const kmsKey = new kms.Key(this, 'KmsKey', {
       enableKeyRotation: true,
-      removalPolicy: cdk.RemovalPolicy.DESTROY,
     });
     this.kmsKeyArn = kmsKey.keyArn;
 
     // SNS topic
-    const snsTopic = new sns.Topic(this, 'CDKIntegTestTopic', {
+    const snsTopic = new sns.Topic(this, 'Topic', {
       masterKey: kmsKey,
     });
     this.topicArn = snsTopic.topicArn;
 
-    // SQS queues
-    const dlq = new sqs.Queue(this, 'QueueDlq', {
+    // SQS queue with a dead letter queue
+    const dlq = new sqs.Queue(this, 'Dlq', {
       enforceSSL: true,
     });
-    NagSuppressions.addResourceSuppressions(dlq, [
-      {
-        id: 'AwsSolutions-SQS3',
-        reason: 'Ignore dead-letter queue (DLQ) for DLQ',
-      },
-    ]);
 
     const sqsQueue = new sqs.Queue(this, 'Queue', {
       enforceSSL: true,
@@ -62,20 +64,21 @@ export class CdkIntegTestsDemoStack extends cdk.Stack {
       },
     });
 
-    // DynamoDB
+    // DynamoDB table
     const table = new dynamodb.Table(this, 'Table', {
       partitionKey: { name: 'id', type: dynamodb.AttributeType.STRING },
-      removalPolicy: cdk.RemovalPolicy.DESTROY,
     });
     this.tableName = table.tableName;
 
-    // Consumer Lambda function
-    const functionName = `integ-consumer-${this.stackName}`;
+    // Lambda function
+    const functionName = `integ-lambda-${this.stackName}`;
+
+    // The lambda function's log group
     const logGroup = new logs.LogGroup(this, 'LogGroup', {
       logGroupName: `/aws/lambda/${functionName}`,
-      removalPolicy: cdk.RemovalPolicy.DESTROY,
     });
 
+    // The Lambda function's role with logging permissions
     const lambdaRole = new iam.Role(this, 'Role', {
       assumedBy: new iam.ServicePrincipal('lambda.amazonaws.com'),
       inlinePolicies: {
@@ -94,9 +97,10 @@ export class CdkIntegTestsDemoStack extends cdk.Stack {
       },
     });
 
-    const consumerFunction = new lambdaNodejs.NodejsFunction(
+    // The lambda enricher function
+    const enricherFunction = new lambdaNodejs.NodejsFunction(
       this,
-      'ConsumerLambda',
+      'EnricherLambda',
       {
         functionName: functionName,
         runtime: lambda.Runtime.NODEJS_18_X,
@@ -108,26 +112,27 @@ export class CdkIntegTestsDemoStack extends cdk.Stack {
         role: lambdaRole,
       },
     );
-    table.grantWriteData(consumerFunction);
+    this.functionName = enricherFunction.functionName;
+
+    // Allow Lambda to write data to the DynamoDB table
+    table.grantWriteData(enricherFunction);
 
     // SQS Queue subscribes to SNS
     snsTopic.addSubscription(new snsSubscriptions.SqsSubscription(sqsQueue));
 
-    // AWS Consumer Lambda is triggered by SQS
-    consumerFunction.addEventSource(
+    // Lambda is triggered by SQS
+    enricherFunction.addEventSource(
       new lambdaEventSources.SqsEventSource(sqsQueue),
     );
 
     // If Destroy Policy Aspect is present:
-    if (props && props.setDestroyPolicyToAllResources) {
+    if (props?.setDestroyPolicyToAllResources) {
       cdk.Aspects.of(this).add(new ApplyDestroyPolicyAspect());
     }
   }
 }
-
 /**
- * AWS CDK Aspect Class used to set a removal policy to Destroy for all resources
- * deployed via this stack.
+ * Aspect for setting all removal policies to DESTROY
  */
 class ApplyDestroyPolicyAspect implements cdk.IAspect {
   public visit(node: IConstruct): void {

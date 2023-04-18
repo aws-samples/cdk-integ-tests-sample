@@ -2,7 +2,7 @@
   "name": "cdk-integ-tests-sample",
   "version": "0.1.0",
   "bin": {
-    "cdk-integ-tests-sample": "bin/cdk-integ-tests-sample.js"
+    "cdk-integ-tests-demo": "bin/cdk-integ-tests-demo.js"
   },
   "scripts": {
     "build": "tsc",
@@ -15,16 +15,16 @@
     "integ-test": "integ-runner --directory ./integ-tests --parallel-regions us-east-1 --update-on-failed"
   },
   "devDependencies": {
-    "@aws-cdk/integ-runner": "^2.55.0",
-    "@aws-cdk/integ-tests-alpha": "^2.55.0-alpha.0",
+    "@aws-cdk/integ-runner": "^2.73.0-alpha.0",
+    "@aws-cdk/integ-tests-alpha": "^2.73.0-alpha.0",
     "@types/aws-lambda": "^8.10.111",
     "@types/jest": "^27.5.2",
     "@types/node": "10.17.27",
     "@types/prettier": "2.6.0",
     "@typescript-eslint/eslint-plugin": "^5.44.0",
-    "aws-cdk": "2.55.0",
+    "aws-cdk": "2.73.0",
     "awslint": "^2.51.1",
-    "cdk-nag": "^2.22.20",
+    "cdk-nag": "^2.25.6",
     "esbuild": "^0.16.7",
     "eslint-plugin-awscdk": "^0.0.11",
     "eslint-plugin-import": "^2.26.0",
@@ -37,7 +37,7 @@
   },
   "dependencies": {
     "@aws-sdk/client-dynamodb": "^3.278.0",
-    "aws-cdk-lib": "2.55.0",
+    "aws-cdk-lib": "2.73.0",
     "constructs": "^10.0.0",
     "source-map-support": "^0.5.21"
   }

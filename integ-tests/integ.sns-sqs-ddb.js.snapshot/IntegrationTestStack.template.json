@@ -1,6 +1,7 @@
 {
+ "Description": "This stack includes the application's resources for integration testing.",
  "Resources": {
-  "TopicKeyB2E0C9CB": {
+  "KmsKey46693ADD": {
    "Type": "AWS::KMS::Key",
    "Properties": {
     "KeyPolicy": {
@@ -36,12 +37,12 @@
    "UpdateReplacePolicy": "Delete",
    "DeletionPolicy": "Delete"
   },
-  "CDKIntegTestTopicDE8DB1C3": {
+  "TopicBFC7AF6E": {
    "Type": "AWS::SNS::Topic",
    "Properties": {
     "KmsMasterKeyId": {
      "Fn::GetAtt": [
-      "TopicKeyB2E0C9CB",
+      "KmsKey46693ADD",
       "Arn"
      ]
     }
@@ -49,22 +50,12 @@
    "UpdateReplacePolicy": "Delete",
    "DeletionPolicy": "Delete"
   },
-  "QueueDlq68135BC2": {
+  "DlqD1FAA4AD": {
    "Type": "AWS::SQS::Queue",
    "UpdateReplacePolicy": "Delete",
-   "DeletionPolicy": "Delete",
-   "Metadata": {
-    "cdk_nag": {
-     "rules_to_suppress": [
-      {
-       "reason": "Ignore dead-letter queue (DLQ) for DLQ",
-       "id": "AwsSolutions-SQS3"
-      }
-     ]
-    }
-   }
+   "DeletionPolicy": "Delete"
   },
-  "QueueDlqPolicy7DD7FD51": {
+  "DlqPolicyF16811D6": {
    "Type": "AWS::SQS::QueuePolicy",
    "Properties": {
     "PolicyDocument": {
@@ -82,7 +73,7 @@
        },
        "Resource": {
         "Fn::GetAtt": [
-         "QueueDlq68135BC2",
+         "DlqD1FAA4AD",
          "Arn"
         ]
        }
@@ -92,7 +83,7 @@
     },
     "Queues": [
      {
-      "Ref": "QueueDlq68135BC2"
+      "Ref": "DlqD1FAA4AD"
      }
     ]
    },
@@ -105,7 +96,7 @@
     "RedrivePolicy": {
      "deadLetterTargetArn": {
       "Fn::GetAtt": [
-       "QueueDlq68135BC2",
+       "DlqD1FAA4AD",
        "Arn"
       ]
      },
@@ -143,7 +134,7 @@
        "Condition": {
         "ArnEquals": {
          "aws:SourceArn": {
-          "Ref": "CDKIntegTestTopicDE8DB1C3"
+          "Ref": "TopicBFC7AF6E"
          }
         }
        },
@@ -170,12 +161,12 @@
    "UpdateReplacePolicy": "Delete",
    "DeletionPolicy": "Delete"
   },
-  "QueueIntegrationTestStackCDKIntegTestTopic8C35C20DD8F210A5": {
+  "QueueIntegrationTestStackTopic48A047E7D20E67D5": {
    "Type": "AWS::SNS::Subscription",
    "Properties": {
     "Protocol": "sqs",
     "TopicArn": {
-     "Ref": "CDKIntegTestTopicDE8DB1C3"
+     "Ref": "TopicBFC7AF6E"
     },
     "Endpoint": {
      "Fn::GetAtt": [
@@ -216,7 +207,7 @@
   "LogGroupF5B46931": {
    "Type": "AWS::Logs::LogGroup",
    "Properties": {
-    "LogGroupName": "/aws/lambda/integ-consumer-IntegrationTestStack",
+    "LogGroupName": "/aws/lambda/integ-lambda-IntegrationTestStack",
     "RetentionInDays": 731
    },
    "UpdateReplacePolicy": "Delete",
@@ -320,14 +311,14 @@
    "UpdateReplacePolicy": "Delete",
    "DeletionPolicy": "Delete"
   },
-  "ConsumerLambdaF347BC65": {
+  "EnricherLambdaD19BD302": {
    "Type": "AWS::Lambda::Function",
    "Properties": {
     "Code": {
      "S3Bucket": {
       "Fn::Sub": "cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}"
      },
-     "S3Key": "2b9befab97b4777a9199e770a50629c43d2db325a8b8fe155c7ac07e04718f58.zip"
+     "S3Key": "20a9b83782ad75bba17cfe0459cf6b697755de17d182eff57dca32feffd5f5b5.zip"
     },
     "Role": {
      "Fn::GetAtt": [
@@ -343,7 +334,7 @@
       "AWS_NODEJS_CONNECTION_REUSE_ENABLED": "1"
      }
     },
-    "FunctionName": "integ-consumer-IntegrationTestStack",
+    "FunctionName": "integ-lambda-IntegrationTestStack",
     "Handler": "index.handler",
     "Runtime": "nodejs18.x",
     "Timeout": 30
@@ -355,11 +346,11 @@
    "UpdateReplacePolicy": "Delete",
    "DeletionPolicy": "Delete"
   },
-  "ConsumerLambdaSqsEventSourceIntegrationTestStackQueueCE74B6B540913598": {
+  "EnricherLambdaSqsEventSourceIntegrationTestStackQueueCE74B6B539490406": {
    "Type": "AWS::Lambda::EventSourceMapping",
    "Properties": {
     "FunctionName": {
-     "Ref": "ConsumerLambdaF347BC65"
+     "Ref": "EnricherLambdaD19BD302"
     },
     "EventSourceArn": {
      "Fn::GetAtt": [
@@ -373,23 +364,23 @@
   }
  },
  "Outputs": {
-  "ExportsOutputRefCDKIntegTestTopicDE8DB1C33ABEE015": {
+  "ExportsOutputRefTopicBFC7AF6ECB4A357A": {
    "Value": {
-    "Ref": "CDKIntegTestTopicDE8DB1C3"
+    "Ref": "TopicBFC7AF6E"
    },
    "Export": {
-    "Name": "IntegrationTestStack:ExportsOutputRefCDKIntegTestTopicDE8DB1C33ABEE015"
+    "Name": "IntegrationTestStack:ExportsOutputRefTopicBFC7AF6ECB4A357A"
    }
   },
-  "ExportsOutputFnGetAttTopicKeyB2E0C9CBArn8F244EB3": {
+  "ExportsOutputFnGetAttKmsKey46693ADDArn859AC467": {
    "Value": {
     "Fn::GetAtt": [
-     "TopicKeyB2E0C9CB",
+     "KmsKey46693ADD",
      "Arn"
     ]
    },
    "Export": {
-    "Name": "IntegrationTestStack:ExportsOutputFnGetAttTopicKeyB2E0C9CBArn8F244EB3"
+    "Name": "IntegrationTestStack:ExportsOutputFnGetAttKmsKey46693ADDArn859AC467"
    }
   },
   "ExportsOutputRefTableCD117FA1D18A8047": {

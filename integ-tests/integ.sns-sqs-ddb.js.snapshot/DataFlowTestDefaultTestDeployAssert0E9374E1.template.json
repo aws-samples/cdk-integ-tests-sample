@@ -13,12 +13,12 @@
     "api": "publish",
     "parameters": {
      "TopicArn": {
-      "Fn::ImportValue": "IntegrationTestStack:ExportsOutputRefCDKIntegTestTopicDE8DB1C33ABEE015"
+      "Fn::ImportValue": "IntegrationTestStack:ExportsOutputRefTopicBFC7AF6ECB4A357A"
      },
-     "Message": "{\"id\":\"5623235\",\"message\":\"This message should be validated\",\"useCase\":\"CDKIntegTestDemo\"}"
+     "Message": "{\"id\":\"test-id-1\",\"message\":\"This message should be validated\"}"
     },
     "flattenResponse": "false",
-    "salt": "1681170340396"
+    "salt": "1681853346532"
    },
    "UpdateReplacePolicy": "Delete",
    "DeletionPolicy": "Delete"
@@ -86,7 +86,7 @@
          ],
          "Resource": [
           {
-           "Fn::ImportValue": "IntegrationTestStack:ExportsOutputFnGetAttTopicKeyB2E0C9CBArn8F244EB3"
+           "Fn::ImportValue": "IntegrationTestStack:ExportsOutputFnGetAttKmsKey46693ADDArn859AC467"
           }
          ]
         }
@@ -104,7 +104,7 @@
      "S3Bucket": {
       "Fn::Sub": "cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}"
      },
-     "S3Key": "c519532b68b7cbc9ca6fcad1d1b608452f0cba5889291ec0aecc40c5b48ec1b3.zip"
+     "S3Key": "ae370e1010629b78f494346f49ceef3ab2875718f20e6c808114e6aa770c7bf3.zip"
     },
     "Timeout": 120,
     "Handler": "index.handler",
@@ -127,7 +127,7 @@
     },
     "service": "DynamoDB",
     "api": "getItem",
-    "expected": "{\"$ObjectLike\":{\"Item\":{\"id\":{\"S\":\"5623235\"},\"message\":{\"S\":\"This message should be validated\"},\"useCase\":{\"S\":\"CDKIntegTestDemo\"},\"additionalAttr\":{\"S\":\"enriched\"}}}}",
+    "expected": "{\"$ObjectLike\":{\"Item\":{\"id\":{\"S\":\"test-id-1\"},\"message\":{\"S\":\"This message should be validated\"},\"additionalAttr\":{\"S\":\"enriched\"}}}}",
     "stateMachineArn": {
      "Ref": "AwsApiCallDynamoDBgetItemWaitForB03D8D4C"
     },
@@ -137,12 +137,12 @@
      },
      "Key": {
       "id": {
-       "S": "5623235"
+       "S": "test-id-1"
       }
      }
     },
     "flattenResponse": "false",
-    "salt": "1681170340397"
+    "salt": "1681853346534"
    },
    "DependsOn": [
     "AwsApiCallSNSpublish"
@@ -326,7 +326,7 @@
      "S3Bucket": {
       "Fn::Sub": "cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}"
      },
-     "S3Key": "c519532b68b7cbc9ca6fcad1d1b608452f0cba5889291ec0aecc40c5b48ec1b3.zip"
+     "S3Key": "ae370e1010629b78f494346f49ceef3ab2875718f20e6c808114e6aa770c7bf3.zip"
     },
     "Timeout": 120,
     "Handler": "index.isComplete",
@@ -368,7 +368,7 @@
      "S3Bucket": {
       "Fn::Sub": "cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}"
      },
-     "S3Key": "c519532b68b7cbc9ca6fcad1d1b608452f0cba5889291ec0aecc40c5b48ec1b3.zip"
+     "S3Key": "ae370e1010629b78f494346f49ceef3ab2875718f20e6c808114e6aa770c7bf3.zip"
     },
     "Timeout": 120,
     "Handler": "index.onTimeout",

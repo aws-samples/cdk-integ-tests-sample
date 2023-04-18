@@ -4,23 +4,39 @@
 import { DynamoDBClient, PutItemCommand } from '@aws-sdk/client-dynamodb';
 import { SQSEvent } from 'aws-lambda';
 
+/**
+ * The DynamoDBClient to interact with DynamoDB
+ */
 const client = new DynamoDBClient({});
 
-export async function handler(event: SQSEvent) {
-  console.log(event);
+/**
+ * Helper function for parsing data of type object or string
+ * @param data - The data object to be parsed
+ * @returns - The parsed data object based on its type
+ */
+function parseData(data: object | string) {
+  if (typeof data === 'object') return data;
+  if (typeof data === 'string') return JSON.parse(data);
 
+  return data;
+}
+
+/**
+ * Lambda function handler that parses the SQS event and writes the item to a DynamoDB table
+ * @param event - The event expected to be sent from SQS
+ * @returns - Status code and information about updated and failed records
+ */
+export async function handler(event: SQSEvent) {
   const updatedRecords: string[] = [];
   const failedRecords: string[] = [];
-
   for (const record of event.Records) {
-    const body = JSON.parse(record.body);
-    const message = JSON.parse(body.Message);
+    const body = parseData(record.body);
+    const message = parseData(body.Message);
 
     const putItem = new PutItemCommand({
       Item: {
         id: { S: message.id },
         message: { S: message.message },
-        useCase: { S: message.useCase },
         additionalAttr: { S: 'enriched' },
       },
       TableName: process.env.TABLE_NAME,
@@ -35,7 +51,7 @@ export async function handler(event: SQSEvent) {
     }
   }
 
-  const statusCode = (failedRecords.length == 0) ? 200 : 500;
+  const statusCode = failedRecords.length == 0 ? 200 : 500;
   return {
     statusCode: statusCode,
     updatedRecords: JSON.stringify(updatedRecords),

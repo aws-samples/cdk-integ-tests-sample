@@ -24,10 +24,16 @@ You should have a basic understanding of AWS CDK and AWS event-based architectur
 
 - An AWS account
 - NodeJS and Npm are installed
-- Install AWS CDK version 2.51.1 or later
-- Clone the GitHub source code repository and run `npm install`
+- Install AWS CDK version 2.73.0 or later
+- Clone this repository
 
 ## How to run
+
+Install the project dependencies:
+
+```bash
+npm install
+```
 
 Build the TS application:
 

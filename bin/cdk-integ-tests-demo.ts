@@ -7,7 +7,9 @@ import { AwsSolutionsChecks } from 'cdk-nag';
 import { CdkIntegTestsDemoStack } from '../lib/cdk-integ-tests-demo-stack';
 
 const app = new App();
-new CdkIntegTestsDemoStack(app, 'ApplicationStack');
+new CdkIntegTestsDemoStack(app, 'ApplicationStack', {
+  setDestroyPolicyToAllResources: true,
+});
 
 // Add the cdk-nag AwsSolutions Pack with extra verbose logging enabled.
 Aspects.of(app).add(new AwsSolutionsChecks({ verbose: true }));

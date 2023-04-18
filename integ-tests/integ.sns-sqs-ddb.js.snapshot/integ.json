@@ -1,25 +1,22 @@
 {
-  "version": "22.0.0",
+  "version": "31.0.0",
   "testCases": {
-    "DemoTest/DefaultTest": {
+    "DataFlowTest/DefaultTest": {
       "stacks": [
         "IntegrationTestStack"
       ],
+      "regions": [
+        "${Token[AWS.Region.9]}"
+      ],
       "cdkCommandOptions": {
-        "deploy": {
-          "args": {
-            "toolkitStackName": "CDKToolkit"
-          }
-        },
         "destroy": {
           "args": {
-            "toolkitStackName": "CDKToolkit",
             "force": true
           }
         }
       },
-      "assertionStack": "DemoTest/DefaultTest/DeployAssert",
-      "assertionStackName": "DemoTestDefaultTestDeployAssert54BA1147"
+      "assertionStack": "DataFlowTest/DefaultTest/DeployAssert",
+      "assertionStackName": "DataFlowTestDefaultTestDeployAssert0E9374E1"
     }
   }
 }
