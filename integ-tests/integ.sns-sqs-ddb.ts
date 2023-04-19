@@ -34,7 +34,7 @@ const integ = new IntegTest(app, 'DataFlowTest', {
 
 /**
  * Assertion:
- * The application should handle single message and write the enriched item to the DymnamoDB table.
+ * The application should handle single message and write the enriched item to the DynamoDB table.
  */
 const id = 'test-id-1';
 const message = 'This message should be validated';
