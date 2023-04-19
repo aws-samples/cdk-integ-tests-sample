@@ -14,13 +14,13 @@
 
 This example demonstrates how to write integration tests for your CDK applications using the [AWS CDK integ-test](https://docs.aws.amazon.com/cdk/api/v2/docs/integ-tests-alpha-readme.html) CDK construct and [integ-runner CLI Tool](https://github.com/aws/aws-cdk/tree/main/packages/%40aws-cdk/integ-runner).
 
-Our example application covers a serverless data enrichment application with persistence shown in Figure 1. We demonstrate how to write integration tests for this architecture. 
+Our example application is a serverless data enrichment application with persistence shown in Figure 1. CDK integration tests are written for this application under the ```integ-tests/``` folder. When these tests are run, it creates a separate integration test stack (a copy of your operational application) and runs the test against this isolated environment.
 
 ![Figure 1](./images/sample-architecture.png)
 
 ## Prerequisites
 
-You should have a basic understanding of AWS CDK and AWS event-based architectures.
+You should have a basic understanding of AWS CDK and event-driven architecture.
 
 - An AWS account
 - NodeJS and Npm are installed
@@ -28,6 +28,11 @@ You should have a basic understanding of AWS CDK and AWS event-based architectur
 - Clone this repository
 
 ## How to run
+
+Configure your AWS CLI credentials in your terminal:
+```bash
+aws configure
+```
 
 Install the project dependencies:
 
@@ -41,7 +46,7 @@ Build the TS application:
 npm run build
 ```
 
-Run Integration test:
+Run integration test:
 
 ```bash
 npm run integ-test
@@ -59,7 +64,7 @@ To lint the repository code according to the rules in .eslintrc.json run:
 npm run lint:fix
 ```
 
-## Helpful resouces
+## Helpful resources
 For information on how to get started with these constructs, please refer to [AWS CDK Integ Test documentation](https://docs.aws.amazon.com/cdk/api/v2/docs/integ-tests-alpha-readme.html).
 
 ## Security
