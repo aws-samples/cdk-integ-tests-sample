@@ -67,6 +67,8 @@ export class CdkIntegTestsDemoStack extends cdk.Stack {
     // DynamoDB table
     const table = new dynamodb.Table(this, 'Table', {
       partitionKey: { name: 'id', type: dynamodb.AttributeType.STRING },
+      billingMode: dynamodb.BillingMode.PAY_PER_REQUEST,
+      pointInTimeRecovery: true,
     });
     this.tableName = table.tableName;
 
